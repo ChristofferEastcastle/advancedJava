@@ -9,36 +9,61 @@ public class TestToRoman {
     @Test
     void convertTo1() {
         String expected = "I";
-        assertEquals(expected, Roman.convert(1));
+        assertEquals(expected, Roman.convertToRoman(1));
     }
 
     @Test
     void convertTo4() {
         String expected = "IV";
-        assertEquals(expected, Roman.convert(4));
+        assertEquals(expected, Roman.convertToRoman(4));
     }
 
     @Test
     void convertTo50() {
         String expected = "L";
-        assertEquals(expected, Roman.convert(50));
+        assertEquals(expected, Roman.convertToRoman(50));
     }
 
     @Test
     void convertTo93() {
         String expected = "XCIII";
-        assertEquals(expected, Roman.convert(93));
+        assertEquals(expected, Roman.convertToRoman(93));
     }
 
     @Test
     void convertTo314() {
         String expected = "CCCXIV";
-        assertEquals(expected, Roman.convert(314));
+        assertEquals(expected, Roman.convertToRoman(314));
     }
 
     @Test
     void convertTo1792() {
         String expected = "MDCCXCII";
-        assertEquals(expected, Roman.convert(1792));
+        assertEquals(expected, Roman.convertToRoman(1792));
+    }
+
+    @Test
+    void convertXIXToDecimal() {
+        int expected = 19;
+        assertEquals(expected, Roman.convertToDecimal("XIX"));
+    }
+
+
+    @Test
+    void convertXIIIToDecimal() {
+        int expected = 13;
+        assertEquals(expected, Roman.convertToDecimal("XIII"));
+    }
+
+    @Test
+    void convertMCMIIIToDecimal() {
+        int expected = 1903;
+        assertEquals(expected, Roman.convertToDecimal("MCMIII"));
+    }
+
+    @Test
+    void convertLXXIVToDecimal() {
+        int expected = 74;
+        assertEquals(expected, Roman.convertToDecimal("LXXIV"));
     }
 }
