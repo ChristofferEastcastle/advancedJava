@@ -43,11 +43,22 @@ public class TestToRoman {
     }
 
     @Test
+    void convertTo4999() {
+        String expected = "MMMMCMXCIX";
+        assertEquals(expected, Roman.convertToRoman(4999));
+    }
+
+    @Test
     void convertXIXToDecimal() {
         int expected = 19;
         assertEquals(expected, Roman.convertToDecimal("XIX"));
     }
 
+    @Test
+    void convertMMMMCMXCIXToDecimal() {
+        int expected = 4999;
+        assertEquals(expected, Roman.convertToDecimal("MMMMCMXCIX"));
+    }
 
     @Test
     void convertXIIIToDecimal() {

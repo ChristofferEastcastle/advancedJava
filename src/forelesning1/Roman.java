@@ -8,6 +8,8 @@ public class Roman {
 
     public static String convertToRoman(int input) {
 
+        if (input < 0 || input > 4999) return "Not valid";
+
         String output = "";
         int decimal = input;
 
@@ -28,20 +30,16 @@ public class Roman {
         String str = input;
         int decimal = 0;
 
-        while (!str.equals("")) {
-            if (str.length() == 1) {
-                decimal += getValue(str.charAt(0));
-                break;
-            }
+        while (str.length() > 1) {
             int currentValue = getValue(str.charAt(0));
             int nextValue = getValue(str.charAt(1));
 
-            if (currentValue >= nextValue) decimal += currentValue;
-
-            else decimal -= currentValue;
+            decimal = (currentValue >= nextValue) ? decimal + currentValue : decimal - currentValue;
 
             str = str.substring(1);
         }
+        // Adding last value of the string here
+        decimal += getValue(str.charAt(0));
         return decimal;
     }
 
