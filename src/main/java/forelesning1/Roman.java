@@ -10,19 +10,19 @@ public class Roman {
 
         if (input < 0 || input > 4999) return "Not valid";
 
-        String output = "";
+        StringBuilder output = new StringBuilder();
         int decimal = input;
 
         while (decimal > 0) {
             for (int i = romanValues.length - 1; i >= 0; i--) {
                 if (romanValues[i] <= decimal) {
-                    output += romanNumerals[i];
+                    output.append(romanNumerals[i]);
                     decimal -= romanValues[i];
                     break;
                 }
             }
         }
-        return output;
+        return output.toString();
     }
 
     public static int convertToDecimal(String input) {
