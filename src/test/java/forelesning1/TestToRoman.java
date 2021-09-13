@@ -1,5 +1,7 @@
 package forelesning1;
 
+import forelesning1.Roman;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +11,7 @@ public class TestToRoman {
     @Test
     void convertTo1() {
         String expected = "I";
-        assertEquals(expected, Roman.convertToRoman(1));
+        Assertions.assertEquals(expected, Roman.convertToRoman(1));
     }
 
     @Test
