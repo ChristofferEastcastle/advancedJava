@@ -13,3 +13,4 @@
 /modules.xml
 /vcs.xml
 *.iml
+/target/
