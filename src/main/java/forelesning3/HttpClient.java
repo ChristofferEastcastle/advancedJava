@@ -2,28 +2,21 @@ package forelesning3;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 
 public class HttpClient {
-    private final HashMap<String, String> headers;
-    private final int statusCode;
-    private final String body;
+    private HashMap<String, String> headers;
+    private int statusCode;
+    private String body;
+    private final String path;
+    private final int port;
+    private final String host;
 
-    public HttpClient(String host, int port, String path) throws IOException {
-        var socket = new Socket(host, port);
-
-        String req = String.format("GET %s HTTP/1.1\r\n" +
-                                    "Connection: close\r\n" +
-                                    "Host: %s\r\n" +
-                                    "\r\n", path, host);
-
-        socket.getOutputStream().write(req.getBytes());
-
-        statusCode = Integer.parseInt(readLine(socket).split(" ")[1]);
-
-        headers = readInputHeaders(socket);
-
-        body = readBodyContent(socket);
+    public HttpClient(String host, int port, String path) {
+        this.host = host;
+        this.port = port;
+        this.path = path;
     }
 
     private String readLine(Socket socket) throws IOException {
@@ -72,6 +65,26 @@ public class HttpClient {
     }
 
     public String getResponseBody() {
+        return body;
+    }
+
+    public String executeRequest() throws IOException {
+
+        var socket = new Socket(host, port);
+
+        String req = String.format("GET %s HTTP/1.1\r\n" +
+                "Connection: close\r\n" +
+                "Host: %s\r\n" +
+                "\r\n", path, host);
+
+        socket.getOutputStream().write(req.getBytes());
+
+        statusCode = Integer.parseInt(readLine(socket).split(" ")[1]);
+
+        headers = readInputHeaders(socket);
+
+        body = readBodyContent(socket);
+
         return body;
     }
 }
