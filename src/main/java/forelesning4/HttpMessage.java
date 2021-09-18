@@ -2,6 +2,7 @@ package forelesning4;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class HttpMessage {
 
@@ -23,6 +24,21 @@ public class HttpMessage {
         }
 
         return buffer.toString();
+    }
+
+    public static HashMap<String, String> readInputHeaders(Socket socket) throws IOException {
+        HashMap<String, String> headers = new HashMap<>();
+        String[] splitted;
+        String line = readLine(socket), key, value;
+
+        while (!line.isEmpty()) {
+            splitted = line.split(":");
+            key = splitted[0];
+            value = splitted[1].trim();
+            headers.put(key, value);
+            line = readLine(socket);
+        }
+        return headers;
     }
 
 }

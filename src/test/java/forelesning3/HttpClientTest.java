@@ -12,6 +12,7 @@ public class HttpClientTest {
     @Test
     void getStatusCode200() throws IOException {
         var client = new HttpClient("httpbin.org", 80, "/html");
+        
         var status = client.getStatusCode();
         assertEquals(200, status);
     }
@@ -19,12 +20,14 @@ public class HttpClientTest {
     @Test
     void shouldReadResponseHeaders() throws IOException {
         var client = new HttpClient("httpbin.org", 80, "/html");
+        
         assertEquals("text/html; charset=utf-8", client.getResponseHeader("Content-Type"));
     }
 
     @Test
     void shouldReadResponseBody() throws IOException {
         var client = new HttpClient("httpbin.org", 80, "/html");
+        
         var expected = "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "  <head>\n" +
