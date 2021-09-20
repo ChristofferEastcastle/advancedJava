@@ -45,4 +45,14 @@ public class HttpServerTest {
         HttpClient client = new HttpClient("localhost", port, "/example-file.txt");
         assertEquals(fileContent, client.getResponseBody());
     }
+
+    @Test
+    void shouldReadHelloWorldFromFile() throws IOException {
+        HttpServer server = new HttpServer();
+        int port = server.getActualPort();
+        String fileContent = Files.readString(Paths.get("/index.html".substring(1)));
+        server.setRoot(Paths.get("."));
+        HttpClient client = new HttpClient("localhost", port, "/index.html");
+        assertEquals(fileContent, client.getResponseBody());
+    }
 }
