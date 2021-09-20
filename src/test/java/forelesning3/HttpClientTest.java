@@ -1,6 +1,5 @@
 package forelesning3;
 
-import forelesning3.HttpClient;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

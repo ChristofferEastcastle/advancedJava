@@ -7,18 +7,20 @@ import java.net.Socket;
 public class HttpServer {
 
     private final ServerSocket serverSocket;
-    private final Thread thread;
 
     public HttpServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
-        thread = new Thread(this::handleConnections);
-        thread.start();
+        getThread();
     }
 
     public HttpServer() throws IOException {
         serverSocket = new ServerSocket(0);
-        thread = new Thread(this::handleConnections);
-        thread.start();
+        getThread();
+    }
+
+
+    private void getThread() {
+        new Thread(this::handleConnections).start();
     }
 
 
