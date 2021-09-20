@@ -4,6 +4,9 @@ import forelesning3.HttpClient;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -20,7 +23,7 @@ public class HttpServerTest {
     void shouldReadResponseCode404() throws IOException {
         var server = new HttpServer();
         int port = server.getActualPort();
-        var client = new HttpClient("localhost", port, "/");
+        var client = new HttpClient("localhost", port, "/nothing-here");
         assertEquals(404, client.getStatusCode());
     }
 
@@ -32,5 +35,14 @@ public class HttpServerTest {
         assertEquals("Hello World!", client.getResponseBody());
     }
 
-
+    @Test
+    void shouldReadFileFromDisk() throws IOException {
+        HttpServer server = new HttpServer();
+        int port = server.getActualPort();
+        String fileContent = "A file created at: " + LocalTime.now();
+        Files.write(Paths.get("target/test-classes/example-file.txt"), fileContent.getBytes());
+        server.setRoot(Paths.get("target/test-classes"));
+        HttpClient client = new HttpClient("localhost", port, "/example-file.txt");
+        assertEquals(fileContent, client.getResponseBody());
+    }
 }
