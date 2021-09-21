@@ -14,6 +14,7 @@ public class HttpServerTest {
     @Test
     void shouldReadResponseCode200() throws IOException {
         var server = new HttpServer(80);
+        server.start();
         int port = server.getActualPort();
         var client = new HttpClient("localhost", port, "/hello");
         assertEquals(200, client.getStatusCode());
@@ -22,6 +23,7 @@ public class HttpServerTest {
     @Test
     void shouldReadResponseCode404() throws IOException {
         var server = new HttpServer();
+        server.start();
         int port = server.getActualPort();
         var client = new HttpClient("localhost", port, "/nothing-here");
         assertEquals(404, client.getStatusCode());
@@ -30,6 +32,7 @@ public class HttpServerTest {
     @Test
     void shouldReadResponseMessage() throws IOException {
         var server = new HttpServer();
+        server.start();
         int port = server.getActualPort();
         var client = new HttpClient("localhost", port, "/hello");
         assertEquals("Hello World!", client.getResponseBody());
@@ -38,6 +41,7 @@ public class HttpServerTest {
     @Test
     void shouldReadFileFromDisk() throws IOException {
         HttpServer server = new HttpServer();
+        server.start();
         int port = server.getActualPort();
         String fileContent = "A file created at: " + LocalTime.now();
         Files.write(Paths.get("target/test-classes/example-file.txt"), fileContent.getBytes());
@@ -49,10 +53,24 @@ public class HttpServerTest {
     @Test
     void shouldReadHelloWorldFromFile() throws IOException {
         HttpServer server = new HttpServer();
+        server.start();
         int port = server.getActualPort();
         String fileContent = Files.readString(Paths.get("/index.html".substring(1)));
         server.setRoot(Paths.get("."));
         HttpClient client = new HttpClient("localhost", port, "/index.html");
         assertEquals(fileContent, client.getResponseBody());
+    }
+
+    @Test
+    void testHandleMultipleConnectionsAtOnce() throws IOException {
+        HttpServer server = new HttpServer();
+        server.start();
+        HttpClient client = new HttpClient("localhost", server.getActualPort(), "/index.html");
+        assertEquals(200, client.getStatusCode());
+
+        client = new HttpClient("localhost", server.getActualPort(), "/notavailable");
+        assertEquals(404, client.getStatusCode());
+        client = new HttpClient("localhost", server.getActualPort(), "/hello");
+        assertEquals(200, client.getStatusCode());
     }
 }

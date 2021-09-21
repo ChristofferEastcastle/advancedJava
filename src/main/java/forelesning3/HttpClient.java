@@ -7,16 +7,24 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class HttpClient {
-    private final HashMap<String, String> headers;
+    private final String host;
+    private final Socket socket;
+    private HashMap<String, String> headers;
     private final int statusCode;
-    private final String body;
+    private String body;
 
 
     public HttpClient(String host, int port, String path) throws IOException {
-        var socket = new Socket(host, port);
+        this.socket = new Socket(host, port);
+        this.host = host;
+        statusCode = executeRequest(path);
 
+    }
+
+    public int executeRequest(String path) throws IOException {
+        final int statusCode;
         String req = String.format("GET %s HTTP/1.1\r\n" +
-                "Connection: close\r\n" +
+                "Connection: keep-alive\r\n" +
                 "Host: %s\r\n" +
                 "\r\n", path, host);
 
@@ -28,6 +36,7 @@ public class HttpClient {
 
         body = HttpMessage.readBytes(socket, Integer.parseInt(headers.get("Content-Length")));
 
+        return statusCode;
     }
 
     public int getStatusCode() {

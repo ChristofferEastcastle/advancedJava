@@ -3,55 +3,52 @@ package forelesning4;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.HashMap;
 
-public class HttpServer {
+public class HttpServer implements Runnable{
 
-    private final ServerSocket serverSocket;
-    private Path rootPath = Paths.get(".");
+    private ServerSocket serverSocket;
+    private final int port;
+    private Thread thread;
+    private Path rootPath = Path.of(".");
+    private HashMap<String, String> headers = new HashMap<>();
+    private boolean stopped = false;
 
-    public HttpServer(int port) throws IOException {
-        serverSocket = new ServerSocket(port);
-        new Thread(this::handleConnections).start();
+    public HttpServer(int port) {
+        this.port = port;
     }
 
-    public HttpServer() throws IOException {
-        serverSocket = new ServerSocket(0);
-        new Thread(this::handleConnections).start();
+    public HttpServer() {
+        this.port = 0;
     }
 
-    private void handleConnections() {
-        try {
-            Socket socket = serverSocket.accept();
-            String[] requestLine = HttpMessage.readLine(socket).split(" ", 3);
-            String path = requestLine[1], responseMessage, statusCode,
-                    contentType = "text/plain";
+    public void run() {
+        synchronized (this) {
+            this.thread = Thread.currentThread();
+        }
+        openServerSocket();
+        while (!stopped) {
+            Socket socket = null;
+            try {
 
-            if (path.equals("/hello")) {
-                responseMessage = "Hello World!";
-                statusCode = "200 OK";
-            } else if (rootPath != null && Files.exists(rootPath.resolve(path.substring(1)))) {
-                if (path.endsWith(".html")) contentType = "text/html";
+                socket = serverSocket.accept();
 
-                responseMessage = Files.readString(rootPath.resolve(path.substring(1)));
-                statusCode = "200 OK";
-            } else {
-                responseMessage = "NOT FOUND!";
-                statusCode = "404 NOT FOUND";
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             }
-            socket.getOutputStream().write(("HTTP/1.1 " + statusCode + "\r\n" +
-                    "Connection: keep-alive\r\n" +
-                    "Content-Length: " + responseMessage.length() + "\r\n" +
-                    "Content-type: " + contentType + ";charset=utf-8\r\n" +
-                    "\r\n" +
-                    responseMessage).getBytes());
+            new Thread(new HttpWorker(socket, this)).start();
+        }
+    }
+
+    private void openServerSocket() {
+        try {
+            serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        handleConnections();
     }
+
 
     public int getActualPort() {
         return serverSocket.getLocalPort();
@@ -61,7 +58,21 @@ public class HttpServer {
         this.rootPath = rootPath;
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         HttpServer server = new HttpServer(8008);
+        server.start();
+    }
+
+    public void start() {
+        new Thread(this).start();
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public Path getRootPath() {
+        return rootPath;
     }
 }
