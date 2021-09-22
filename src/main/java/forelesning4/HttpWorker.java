@@ -27,10 +27,12 @@ public class HttpWorker implements Runnable {
             String path = requestLine[1], responseMessage, statusCode,
                     contentType = "text/plain";
 
+            if (path.equals("/")) path = "/index.html";
+
             if (path.equals("/hello")) {
                 responseMessage = "Hello World!";
                 statusCode = "200 OK";
-            } else if (rootPath != null && Files.exists(rootPath.resolve(path.substring(1)))) {
+            } else if (Files.exists(rootPath.resolve(path.substring(1)))) {
                 if (path.endsWith(".html")) contentType = "text/html";
 
                 responseMessage = Files.readString(rootPath.resolve(path.substring(1)));
@@ -39,11 +41,12 @@ public class HttpWorker implements Runnable {
                 responseMessage = "NOT FOUND!";
                 statusCode = "404 NOT FOUND";
             }
+
             socket.getOutputStream().write(("HTTP/1.1 " + statusCode + "\r\n" +
                     "Content-Length: " + responseMessage.length() + "\r\n" +
                     "Content-Type: " + contentType + ";charset=utf-8\r\n" +
                     "\r\n" +
-                    responseMessage).getBytes());
+                    responseMessage + "\n").getBytes());
 
             socket.close();
         } catch (IOException e) {

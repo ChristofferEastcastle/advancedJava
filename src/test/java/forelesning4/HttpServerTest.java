@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpServerTest {
     @Test
     void shouldReadResponseCode200() throws IOException {
-        var server = new HttpServer(80);
+        var server = new HttpServer();
         server.start();
         int port = server.getActualPort();
         var client = new HttpClient("localhost", port, "/hello");
